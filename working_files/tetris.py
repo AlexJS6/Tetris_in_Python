@@ -169,7 +169,7 @@ def convert_shape_format(shape):
     for i, pos in enumerate(positions):
         positions[i] = (pos[0] - 2, pos[1] - 4) #move everything up and left
 
-
+    return positions
 
 
 def valid_space(shape, grid):
@@ -213,10 +213,47 @@ def draw_grid(surface, grid):
 
 
 def clear_rows(grid, locked):
-    pass
+    
+    inc = 0
+    for i in range(len(grid) -1, -1, -1): #we start from bottom so when we move the things down we start from bottom so no chance of overwrite other key.
+        row = grid[i]
+        if (0, 0, 0) not in row:
+            inc += 1
+            ind = i
+            for j in range(len(row)):
+                try:
+                    del locked[(j ,i)] #whenever we delete a row we need to increment 1
+                except:
+                    continue
+
+    if inc > 0:
+        for key in sorted(list(locked), key = lambda x: x[1])[::-1]: #for every key in our sorted list of locked positions based on y value ex: [(0, 1), (0, 0)] gets [(0, 0), (0, 1)]
+            x, y = key #(key is a tuple) so x first value and y second
+            if y < ind: #if y is above the current index or row that we removed ex: row 17 deleted -> row over 17 moved down
+                newKey = (x, y + inc) #inc sayys how many something needs to be shifted down!
+                locked[newKey] = locked.pop(key)
+
+
+
 
 def draw_next_shape(shape, surface):
-    pass
+    font = pygame.font.SysFont('comicsans', 30)
+    label = font.render('Next Shape:', 1, (255, 255, 255))
+
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height/2 - 100 #position of 'Next shape' (changeable)
+    format = shape.shape[shape.rotation % len(shape.shape)] #same as before (format -> sublist)
+
+    for i, line in enumerate(format):
+        row = list(line)
+        for j, column in enumerate(row): #we do this again bcs don't care of position in grid we care when we should draw something or not (static image)
+            if column == '0':
+                pygame.draw.rect(surface, shape.color, (sx + j*block_size, sy + i*block_size, block_size, block_size), 0) #similiar to what already done
+
+    surface.blit(label, (sx + 10, sy - 30)) #our position(changeable)
+
+
+
 
 def draw_window(surface, grid):
     surface.fill((0, 0, 0)) #fill in black
@@ -233,9 +270,8 @@ def draw_window(surface, grid):
 
     pygame.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 4) #draws rectangle for play area in red and only border, of size 4
 
-    
     draw_grid(surface, grid)
-    pygame.display.update()
+    #pygame.display.update()
 
 
 def main(win):
@@ -272,12 +308,12 @@ def main(win):
                 if event.key == pygame.K_LEFT:
                     current_piece.x -= 1
                     if not (valid_space(current_piece, grid)): #If try to move left in invalid space, - then + so pretend we didnt move
-                        current_piece += 1
+                        current_piece.x += 1
 
                 if event.key == pygame.K_RIGHT:
                     current_piece.x += 1
                     if not (valid_space(current_piece, grid)): #like above but other way
-                        current_piece -= 1
+                        current_piece.x -= 1
 
                 if event.key == pygame.K_DOWN:
                     current_piece.y += 1
@@ -287,7 +323,7 @@ def main(win):
                 if event.key == pygame.K_UP:
                     current_piece.rotation += 1 #changes rotation
                     if not (valid_space(current_piece, grid)):
-                        current_piece -= 1
+                        current_piece.rotation -= 1
 
 
         shape_pos = convert_shape_format(current_piece)
@@ -304,8 +340,13 @@ def main(win):
             current_piece = next_piece
             next_piece = get_shape()
             change_piece = False
+            clear_rows(grid, locked_positions) #We declare this here so it cant have a bug when falling making a row and clearing the row, only clearing row when on the ground, and next shape declared.
+
+
 
         draw_window(win, grid)
+        draw_next_shape(next_piece, win)
+        pygame.display.update()
 
         if check_lost(locked_positions):
             run = False
