@@ -260,9 +260,7 @@ def draw_next_shape(shape, surface):
 
 
 def update_score(nscore):
-    with open('scores.txt', 'r') as f: #r = read
-        lines = f.readlines()
-        score = lines[0].strip()
+    score = max_score()
 
     with open('scores.txt', 'w') as f: #w = write
         if int(score) > nscore:
@@ -271,9 +269,14 @@ def update_score(nscore):
             f.write(str(nscore))
 
 
+def max_score():
+    with open('scores.txt', 'r') as f: #r = read
+        lines = f.readlines()
+        score = lines[0].strip()
 
+    return score
 
-def draw_window(surface, grid, score = 0): #default = 0
+def draw_window(surface, grid, score = 0, last_score = 0): #default = 0
     surface.fill((0, 0, 0)) #fill in black
 
     pygame.font.init() #initialize font
@@ -281,12 +284,21 @@ def draw_window(surface, grid, score = 0): #default = 0
     label = font.render('Tetris', 1, (255, 255, 255)) #We render a text ('Tetris) with antialiszing 1 (is obligatory) in white
     
     surface.blit(label, (top_left_x + play_width/2 - (label.get_width()/2), 30)) # Put it in the middle of the screen
-      
+    
+    #current score
     font = pygame.font.SysFont('comicsans', 30)
     label = font.render('Score: ' + str(score), 1, (255, 255, 255))
 
     sx = top_left_x + play_width + 50
     sy = top_left_y + play_height/2 - 100 #position of 'Next shape' (changeable)
+    
+    surface.blit(label, (sx +20, sy + 180))
+
+    #last score
+    label = font.render('High Score: ' + last_score, 1, (255, 255, 255))
+
+    sx = top_left_x - 200
+    sy = top_left_y + 220
     
     surface.blit(label, (sx +20, sy + 180))
 
@@ -301,7 +313,7 @@ def draw_window(surface, grid, score = 0): #default = 0
 
 
 def main(win):
-    
+    last_score = max_score()
     locked_positions = {}
     grid = create_grid(locked_positions)
 
@@ -374,10 +386,10 @@ def main(win):
             current_piece = next_piece
             next_piece = get_shape()
             change_piece = False
-            score += clear_rows(grid, locked_positions) * 10 #We declare this here so it cant have a bug when falling making a row and clearing the row, only clearing row when on the ground, and next shape declared. it also increments score
+            score += clear_rows(grid, locked_positions) * 20 #We declare this here so it cant have a bug when falling making a row and clearing the row, only clearing row when on the ground, and next shape declared. it also increments score
 
 
-        draw_window(win, grid, score)
+        draw_window(win, grid, score, last_score)
         draw_next_shape(next_piece, win)
         pygame.display.update()
 
