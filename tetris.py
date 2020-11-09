@@ -238,7 +238,7 @@ def clear_rows(grid, locked):
                 newKey = (x, y + inc) #inc sayys how many something needs to be shifted down!
                 locked[newKey] = locked.pop(key)
 
-    return inc
+    return inc 
 
 
 def draw_next_shape(shape, surface):
@@ -262,7 +262,7 @@ def draw_next_shape(shape, surface):
 def update_score(nscore):
     score = max_score()
 
-    with open('scores.txt', 'w') as f: #w = write
+    with open('scores.txt', 'w') as f:
         if int(score) > nscore:
             f.write(str(score))
         else:
@@ -270,11 +270,12 @@ def update_score(nscore):
 
 
 def max_score():
-    with open('scores.txt', 'r') as f: #r = read
+    with open('scores.txt', 'r') as f:
         lines = f.readlines()
         score = lines[0].strip()
 
     return score
+
 
 def draw_window(surface, grid, score = 0, last_score = 0): #default = 0
     surface.fill((0, 0, 0)) #fill in black
@@ -298,15 +299,15 @@ def draw_window(surface, grid, score = 0, last_score = 0): #default = 0
     label = font.render('High Score: ' + last_score, 1, (255, 255, 255))
 
     sx = top_left_x - 200
-    sy = top_left_y + 220
+    sy = top_left_y + 200
     
-    surface.blit(label, (sx +20, sy + 180))
+    surface.blit(label, (sx +20, sy + 160))
 
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             pygame.draw.rect(surface, grid[i][j], (top_left_x + j*block_size, top_left_y + i*block_size, block_size, block_size), 0) #draw rectangle(rect), 0 at the end to be sure to fill, not just draw a border -> gives correct position to draw
 
-    pygame.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 4) #draws rectangle for play area in red and only border, of size 4
+    pygame.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 5) #draws rectangle for play area in red and only border, of size 5
 
     draw_grid(surface, grid)
     #pygame.display.update()
@@ -341,34 +342,35 @@ def main(win):
         if fall_time/1000 > fall_speed: #Check values
             fall_time = 0
             current_piece.y += 1
-            if not (valid_space(current_piece, grid)) and current_piece.y > 0:
+            if not(valid_space(current_piece, grid)) and current_piece.y > 0:
                 current_piece.y -= 1
                 change_piece = True
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.display.quit()
             
             if event.type == pygame.KEYDOWN: #Keydown is any key!
 
                 if event.key == pygame.K_LEFT:
                     current_piece.x -= 1
-                    if not (valid_space(current_piece, grid)): #If try to move left in invalid space, - then + so pretend we didnt move
+                    if not(valid_space(current_piece, grid)): #If try to move left in invalid space, - then + so pretend we didnt move
                         current_piece.x += 1
 
                 if event.key == pygame.K_RIGHT:
                     current_piece.x += 1
-                    if not (valid_space(current_piece, grid)): #like above but other way
+                    if not(valid_space(current_piece, grid)): #like above but other way
                         current_piece.x -= 1
 
                 if event.key == pygame.K_DOWN:
                     current_piece.y += 1
-                    if not (valid_space(current_piece, grid)):
+                    if not(valid_space(current_piece, grid)):
                         current_piece.y -= 1
 
                 if event.key == pygame.K_UP:
                     current_piece.rotation += 1 #changes rotation
-                    if not (valid_space(current_piece, grid)):
+                    if not(valid_space(current_piece, grid)):
                         current_piece.rotation -= 1
 
 
@@ -386,10 +388,10 @@ def main(win):
             current_piece = next_piece
             next_piece = get_shape()
             change_piece = False
-            score += clear_rows(grid, locked_positions) * 20 #We declare this here so it cant have a bug when falling making a row and clearing the row, only clearing row when on the ground, and next shape declared. it also increments score
+            score += clear_rows(grid, locked_positions) * 25 #We declare this here so it cant have a bug when falling making a row and clearing the row, only clearing row when on the ground, and next shape declared. it also increments score
 
 
-        draw_window(win, grid, score, last_score)
+        draw_window(win, grid, score, last_score) 
         draw_next_shape(next_piece, win)
         pygame.display.update()
 
@@ -410,7 +412,6 @@ def main_menu(win):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                pygame.display.quit()
             if event.type == pygame.KEYDOWN: #Any key makes you launch main() function -> PLAY
                 main(win)
     
