@@ -15,7 +15,7 @@ inspired from: https://www.youtube.com/watch?v=uoR4ilCWwKA&t=6s&ab_channel=TechW
 - Then choose were you want to install the game.
 - It will install a folder and in the folder there is a 'tetris.exe' file, open it.
 - You might need to turn off the antivirus temporarily.
-- You can then play tetris and you will surely beat my highscore of 100 ;)
+- You can then play tetris and you will surely beat my highscore of 175 ;)
 
 ## The Game 
 
