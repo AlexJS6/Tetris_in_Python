@@ -10,13 +10,12 @@ This is one of my first projects and first ever game in python and is strongly i
 inspired from: https://www.youtube.com/watch?v=uoR4ilCWwKA&t=6s&ab_channel=TechWithTim
 
 ## Instructions to test the game
-- You need to be able to use python
-- Copy paste tetris.py into your python file
-- create a 'scores.txt' file and write 0 in it and save it (this saves the highscores)
-- You then need to install the pygame module in your terminal with:  
-```pip install pygame```
-- The path to python must work!
-- Then just run the file in the terminal an voilà! You can play Tetris!
+- Open the 'Tetris_in_Python.exe' file
+- Download it, accept the antivirus messages, trust me :) OR NOT.
+- Then choose were you want to install the game.
+- It will install a folder and in the folder there is a 'tetris.exe' file, open it.
+- You might need to turn off the antivirus temporarily.
+- You can then play tetris and you will surely beat my highscore of 100 ;)
 
 ## The Game 
 
